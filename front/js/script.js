@@ -18,6 +18,7 @@ function afficheDatas(canapes) {
     
     items.innerHTML = result          
 }
+
 fetch("http://localhost:3000/api/Products")
     .then(function(res) {
         return res.json();
@@ -30,5 +31,3 @@ fetch("http://localhost:3000/api/Products")
       .catch(function(err) {
         // Une erreur est survenue
     });
-    
-
