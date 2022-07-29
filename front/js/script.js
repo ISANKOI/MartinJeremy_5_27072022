@@ -1,7 +1,7 @@
 function canape_to_html(data){
     return`<a href="./product.html?id=${data._id}">
     <article>
-      <img src="${data.imageUrl}" alt=${data.altTxt}">
+      <img src="${data.imageUrl}" alt="${data.altTxt}">
       <h3 class="productName">${data.name}</h3>
       <p class="productDescription">${data.description}</p>
     </article>
@@ -18,7 +18,6 @@ function afficheDatas(canapes) {
     
     items.innerHTML = result          
 }
-
 fetch("http://localhost:3000/api/Products")
     .then(function(res) {
         return res.json();
