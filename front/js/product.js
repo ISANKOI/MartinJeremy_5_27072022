@@ -47,6 +47,7 @@ bouton.addEventListener("click", (event) => {
     alert("veuillez selectionner une couleur");
     return;
   }
+  //Stockage dans localStorage
   //cart.add(productId, colors, quantity)
   const productChoice = [productId, colors, quantity];
   localStorage.setItem(productId, JSON.stringify(productChoice));
