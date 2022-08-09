@@ -34,7 +34,6 @@ function afficheDatas(data) {
 //Ajouter au panier
 
 const bouton = document.getElementById("addToCart");
-console.log(bouton);
 bouton.addEventListener("click", (event) => {
   const colors = productColor.value;
   console.log(colors);
@@ -47,10 +46,13 @@ bouton.addEventListener("click", (event) => {
     alert("veuillez selectionner une couleur");
     return;
   }
+
+  
+
   //Stockage dans localStorage
   //cart.add(productId, colors, quantity)
-  const productChoice = [productId, colors, quantity];
-  localStorage.setItem(productId, JSON.stringify(productChoice));
+  const cart = [productId, colors, quantity];
+  localStorage.setItem("canape", JSON.stringify(cart));
   window.location.href = "cart.html";
 });
 
