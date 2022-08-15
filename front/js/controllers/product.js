@@ -1,5 +1,6 @@
-var cart = new Cart()
-cart.load()
+var cart = new Cart();
+cart.load(productId, colors, quantity);
+
 //----- Recuperation ID canape -----//
 const url = new URL(window.location.href);
 var productId = url.searchParams.get("id");
@@ -39,8 +40,10 @@ bouton.addEventListener("click", (event) => {
   //Declaration valeur couleur choisi
   const colors = productColor.value;
   console.log(colors);
+
   //Declaration valeur quantité choisi
-  const quantity = productQuant.value;
+  const quantity = parseInt(productQuant.value, 10);
+
   //Condition pour validation de mise au panier
   if (quantity == 0 || quantity > 100) {
     alert("veuillez selectionner une quantité (1-100)");
@@ -50,28 +53,11 @@ bouton.addEventListener("click", (event) => {
     alert("veuillez selectionner une couleur");
     return;
   }
-  cart.add(productId, colors, quantity)
-  cart.remove(productId, colors, quantity)
-  cart.save()
 
-  
+  cart.add(productId, colors, quantity);
+  cart.save(productId, colors, quantity);
   window.location.href = "cart.html"
 });
-
-//Stockage dans localStorage
-  /*
-  //condition incrémentation quantité d'une meme produit de meme couleur
-  if (localStorage.getItem(productId) !== null) {
-    //un produit existe déjà
-    let storageCanape = JSON.parse(localStorage.getItem(productId));
-    // incrémentation de la quantité
-    cart[2] = parseInt(storageCanape[2]) + parseInt(quantity);
-    //écriture dans le localStorage
-    localStorage.setItem(productId, JSON.stringify(cart));
-  } else {
-    // pas de produit
-    localStorage.setItem(productId, JSON.stringify(cart));
-  }*/
 
 //----- Recuperation caracteristiques canape -----//
 fetch("http://localhost:3000/api/Products/" + productId)

@@ -5,8 +5,10 @@ class Cart {
     }
     add(id, color, quantity){
         var key = id + "_" + color
+        parseInt(this.storage[key], 10 )
         if(this.storage[key]) {
             this.storage[key] += quantity
+            
         }
         else{
             this.storage[key] = quantity
