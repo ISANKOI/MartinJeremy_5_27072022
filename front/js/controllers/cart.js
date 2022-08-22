@@ -1,48 +1,24 @@
-//var cart = new Cart()
-//cart.load(productId, colors, quantity)
-//Récupération de tout les produits contenu dans localStorage
+var cart = new Cart();
+cart.load();
 
-//cart.load()
-//console.log(test);
-/*
-const item = document.getElementById("cart__items");
-var result = canape_to_html(test);
-item.innerHTML = result;
-
-for (let l in localStorage) {
-  console.log("COUCOU !");
-}
-*/
-
-
-/*const productsChoice = localStorage.length
-const cart = []
-    
-for (let p = 0; p < productsChoice; p++) {
-        
-    const product = localStorage.getItem(localStorage.key(p))
-    const productObject = JSON.parse(product)
-    cart.push(productObject)
-}
-
-    console.log(cart)*/
- /*
-//Affichage caractéristiques du produit 
+//Affichage de ou des produits dans le panier
 function canape_to_html(data) {
-  return `<article class="cart__item" data-id="${data._id}" data-color="{product-color}">
+  var html = "";
+  for (let d in data) {
+    html += `<article class="cart__item" data-id="${data[d].canap_id}" data-color="${data[d].color}">
   <div class="cart__item__img">
-    <img src="${data.imageUrl}" alt="${data.altTxt}">
+    <img src="${data[d].img}" alt="${data[d].altTxt}">
   </div>
   <div class="cart__item__content">
     <div class="cart__item__content__description">
-      <h2>${data.name}</h2>
-      <p>${data.colors}</p>
-      <p>${data.price}</p>
+      <h2>${data[d].name}</h2>
+      <p>${data[d].color}</p>
+      <p>${data[d].unitPrice} €</p>
     </div>
     <div class="cart__item__content__settings">
       <div class="cart__item__content__settings__quantity">
         <p>Qté : </p>
-        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="42">
+        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${data[d].quantity}">
       </div>
       <div class="cart__item__content__settings__delete">
         <p class="deleteItem">Supprimer</p>
@@ -50,19 +26,87 @@ function canape_to_html(data) {
     </div>
   </div>
 </article>`;
-}
-//Affichage des différents articles
-function afficheDatas(canapes) {
-  const items = document.querySelector(".cart__items");
-  var result = JSON.parse(localStorage.getItem(cart));
-  for (let c in canapes) {
-    let canape = canapes[c];
-    result += canape_to_html(canape);
   }
-
-  items.innerHTML = result;
+  return html;
 }
+
+//Affichage des différents articles
+async function afficheDatas() {
+  const items = document.querySelector("#cart__items");
+  items.innerHTML = canape_to_html(await cart.getResume());
+}
+afficheDatas();
+/*
+//Total des quantités
+var productQtt = document.getElementsByClassName("itemQuantity");
+var length = productQtt.length;
+console.log(length);
+totalQtt = 0;
+
+for (var i = 0; i < length; ++i) {
+  totalQtt += productQtt[i];
+}
+
+let productTotalQuantity = document.getElementById("totalQuantity");
+productTotalQuantity.innerHTML = totalQtt;
+console.log(totalQtt);
+
+// Récupération du prix total
+totalPrice = 0;
+
+for (var i = 0; i < length; ++i) {
+    totalPrice += (addition des différent totaux des canapés);
+}
+
+let productTotalPrice = document.getElementById('totalPrice');
+productTotalPrice.innerHTML = totalPrice;
+console.log(totalPrice);
 */
+
+//Modification quantité produit
+let selectQuantity = document.getElementsByClassName("itemQuantity");
+console.log(selectQuantity);
+for (let s in selectQuantity) {
+  console.log(typeof selectQuantity[s]);
+  if (typeof selectQuantity[s] != "Object") continue;
+
+  selectQuantity[s].addEventListener("change", function (event) {
+    var canap_id = event.target.getAttribute("data-id");
+    var canap_color = event.target.getAttribute("data-color");
+    console.log(canap_id);
+    console.log(canap_color);
+    var newQuantity = parseInt(event.target.value, 10);
+    cart.set(canap_id, canap_color, newQuantity);
+    cart.save();
+    afficheDatas();
+  });
+}
+
+/*
+//Suppression du produit dans le panier
+function deleteProduct() {
+  const btn_delete = document.querySelectorAll(".deleteItem");
+  console.log(btn_delete);
+
+  btn_delete.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    //Selection du produit à supprimer en fonction de son id et de sa couleur
+    var canap_id = event.target.getAttribute("data-id");
+    console.log(canap_id);
+    var canap_color = event.target.getAttribute("data-color");
+    cart.delete(canap_id, canap_color);
+    cart.save();
+
+    //Refresh de la page et message supression produit
+    alert("Le produit a bien été supprimé du panier");
+    location.reload();
+  });
+}
+
+deleteProduct();
+*/
+/*
 function getForm() {
   
   let form = document.querySelector(".cart__order__form");
@@ -105,7 +149,7 @@ form.email.addEventListener('change', function() {
         firstNameErrorMsg.innerHTML = '';
     } else {
         firstNameErrorMsg.innerHTML = 'Veuillez renseigner ce champ.';
-        control = false;
+        
     }
 };
 
@@ -117,7 +161,7 @@ const validLastName = function(inputLastName) {
         lastNameErrorMsg.innerHTML = '';
     } else {
         lastNameErrorMsg.innerHTML = 'Veuillez renseigner ce champ.';
-        control = false;
+        
     }
 };
 
@@ -129,7 +173,7 @@ const validAddress = function(inputAddress) {
         addressErrorMsg.innerHTML = '';
     } else {
         addressErrorMsg.innerHTML = 'Veuillez renseigner une adresse.'
-        control = false;
+        
         
     }
 };
@@ -142,7 +186,7 @@ const validCity = function(inputCity) {
         cityErrorMsg.innerHTML = '';
     } else {
         cityErrorMsg.innerHTML = 'Veuillez renseigner une ville.';
-        control = false;
+        
     }
 };
 
@@ -154,20 +198,16 @@ const validEmail = function(inputEmail) {
         emailErrorMsg.innerHTML = '';
     } else {
         emailErrorMsg.innerHTML = 'Veuillez renseigner une adresse mail valide.';
-        control = false;
+        
         
     }
 };
-if (control) {
-    return true;
-} else {
-    return false;
-}
+
   }
-
-getForm();
-
-fetch("http://localhost:3000/api/Products")
+*/
+//getForm();
+/*
+fetch("http://localhost:3000/api/products/order")
   //récupération du résultat de la requête
   .then(function (res) {
     return res.json();
@@ -180,3 +220,4 @@ fetch("http://localhost:3000/api/Products")
   .catch(function (err) {
     
   });
+*/

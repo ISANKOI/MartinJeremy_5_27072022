@@ -1,5 +1,5 @@
 var cart = new Cart();
-cart.load(productId, colors, quantity);
+cart.load();
 
 //----- Recuperation ID canape -----//
 const url = new URL(window.location.href);
@@ -55,7 +55,7 @@ bouton.addEventListener("click", (event) => {
   }
 
   cart.add(productId, colors, quantity);
-  cart.save(productId, colors, quantity);
+  cart.save();
   window.location.href = "cart.html"
 });
 
