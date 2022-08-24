@@ -33,9 +33,6 @@ class Cart {
     if (this.storage[key]) {
       delete this.storage[key];
     }
-    else {
-      return
-    }
   }
 
 //----- Sauvegarde du localStorage -----//
@@ -86,4 +83,15 @@ class Cart {
     console.log(results)
     return results;
   }
+  async getTotal() {
+    var resume = await this.getResume()
+    var price = 0
+    var quantity = 0
+    for(let r in resume) {
+        price += resume[r].total
+        quantity += resume[r].quantity
+    }
+    return {price, quantity}
+  }
 }
+

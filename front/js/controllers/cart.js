@@ -18,10 +18,10 @@ function canape_to_html(data) {
     <div class="cart__item__content__settings">
       <div class="cart__item__content__settings__quantity">
         <p>Qté : </p>
-        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${data[d].quantity}">
+        <input type="number" class="itemQuantity" name="itemQuantity" data-id="${data[d].canap_id}" data-color="${data[d].color}" min="1" max="100" value="${data[d].quantity}">
       </div>
       <div class="cart__item__content__settings__delete">
-        <p class="deleteItem">Supprimer</p>
+        <p class="deleteItem" data-id="${data[d].canap_id}" data-color="${data[d].color}">Supprimer</p>
       </div>
     </div>
   </div>
@@ -30,13 +30,41 @@ function canape_to_html(data) {
   return html;
 }
 
-//Affichage des différents articles
-async function afficheDatas() {
-  const items = document.querySelector("#cart__items");
-  items.innerHTML = canape_to_html(await cart.getResume());
+
+
+
+function setQtt() {
+  
+  let selectQuantity = document.getElementsByClassName("itemQuantity");
+  console.log(selectQuantity);
+  for (let s in selectQuantity) {
+
+    console.log(typeof selectQuantity[s]);
+
+    if (typeof selectQuantity[s] != "object") continue;
+
+    selectQuantity[s].addEventListener("change", (event) => {
+      console.log("setQtt")
+      var canap_id = event.target.getAttribute("data-id");
+      var canap_color = event.target.getAttribute("data-color");
+
+      console.log(canap_id);
+      console.log(canap_color);
+
+      var newQuantity = parseInt(event.target.value, 10);
+
+      console.log(newQuantity);
+
+      cart.set(canap_id, canap_color, newQuantity);
+      cart.save();
+
+      afficheDatas();
+    });
+  }
 }
-afficheDatas();
-/*
+
+
+
 //Total des quantités
 var productQtt = document.getElementsByClassName("itemQuantity");
 var length = productQtt.length;
@@ -51,71 +79,53 @@ let productTotalQuantity = document.getElementById("totalQuantity");
 productTotalQuantity.innerHTML = totalQtt;
 console.log(totalQtt);
 
-// Récupération du prix total
-totalPrice = 0;
-
-for (var i = 0; i < length; ++i) {
-    totalPrice += (addition des différent totaux des canapés);
-}
-
-let productTotalPrice = document.getElementById('totalPrice');
-productTotalPrice.innerHTML = totalPrice;
-console.log(totalPrice);
-*/
-
 //Modification quantité produit
-let selectQuantity = document.getElementsByClassName("itemQuantity");
-console.log(selectQuantity);
-for (let s in selectQuantity) {
-  console.log(typeof selectQuantity[s]);
-  if (typeof selectQuantity[s] != "Object") continue;
 
-  selectQuantity[s].addEventListener("change", function (event) {
-    var canap_id = event.target.getAttribute("data-id");
-    var canap_color = event.target.getAttribute("data-color");
-    console.log(canap_id);
-    console.log(canap_color);
-    var newQuantity = parseInt(event.target.value, 10);
-    cart.set(canap_id, canap_color, newQuantity);
-    cart.save();
-    afficheDatas();
-  });
-}
 
-/*
 //Suppression du produit dans le panier
 function deleteProduct() {
-  const btn_delete = document.querySelectorAll(".deleteItem");
-  console.log(btn_delete);
+  const btn_deletes = document.getElementsByClassName("deleteItem");
+  for(let b in btn_deletes) {
+    if(typeof btn_deletes[b] != "object") continue;
+      btn_deletes[b].addEventListener("click", (event) => {
 
-  btn_delete.addEventListener("click", (event) => {
-    event.preventDefault();
 
-    //Selection du produit à supprimer en fonction de son id et de sa couleur
-    var canap_id = event.target.getAttribute("data-id");
-    console.log(canap_id);
-    var canap_color = event.target.getAttribute("data-color");
-    cart.delete(canap_id, canap_color);
-    cart.save();
-
-    //Refresh de la page et message supression produit
-    alert("Le produit a bien été supprimé du panier");
-    location.reload();
-  });
+        //Selection du produit à supprimer en fonction de son id et de sa couleur
+        var canap_id = event.target.getAttribute("data-id");
+        console.log(canap_id);
+        var canap_color = event.target.getAttribute("data-color");
+        cart.delete(canap_id, canap_color);
+        cart.save();
+    
+        //Refresh de la page et message supression produit
+        afficheDatas();
+        alert("Le produit a bien été supprimé du panier");
+        
+      })
+      
+    }
 }
 
-deleteProduct();
-*/
-/*
+
+
+
 function getForm() {
   
-  let form = document.querySelector(".cart__order__form");
+  let form = document.getElementsByClassName("cart__order__form")[0];
   // Ajout des Regex
   const regExpString = new RegExp("^[a-zA-Zàâäéèêëïîôöùûüç-]+$");
   const regExpEmail = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,3}$');
   const regExpAddress = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
   let control = true;
-
+  form.addEventListener("submit", async function(event){
+    event.preventDefault()
+    event.stopPropagation()
+    alert("coucou !")
+    if((await cart.getTotal()).quantity == 0)
+    {
+      return
+    } 
+  })
   // Ecoute de la modification du prénom
   form.firstName.addEventListener('change', function() {
     validFirstName(this);
@@ -204,7 +214,19 @@ const validEmail = function(inputEmail) {
 };
 
   }
-*/
+getForm();
+
+//Affichage des différents articles
+async function afficheDatas() {
+  const items = document.querySelector("#cart__items");
+  items.innerHTML = canape_to_html(await cart.getResume());
+  const total= await cart.getTotal()
+  document.getElementById("totalQuantity").innerHTML = total.quantity
+  document.getElementById("totalPrice").innerHTML = total.price
+  setQtt();
+  deleteProduct();
+}
+
 //getForm();
 /*
 fetch("http://localhost:3000/api/products/order")
@@ -221,3 +243,4 @@ fetch("http://localhost:3000/api/products/order")
     
   });
 */
+afficheDatas();
