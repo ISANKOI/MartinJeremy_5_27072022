@@ -1,8 +1,7 @@
-/*function orderNumber(){
-    const orderId = document.getElementById("orderId");
-    orderId.innerText = localStorage.getItem("orderId");
-    console.log(localStorage.getItem("orderId"))
-    localStorage.clear();
-}
+function orderNumber() {
+  const url = new URL(window.location.href);
+  document.getElementById("orderId").innerText = url.searchParams.get("id");
 
-orderNumber();*/
+  localStorage.clear();
+}
+orderNumber();
