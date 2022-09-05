@@ -1,8 +1,9 @@
+//----- Création de la class Cart -----//
 class Cart {
     constructor() {
         this.storage = {};
     }
-    //----- Ajouter quantité -----//
+    //----- Ajouter -----//
     add(id, color, quantity) {
         var key = id + "_" + color;
         parseInt(this.storage[key], 10);
@@ -12,7 +13,7 @@ class Cart {
             this.storage[key] = quantity;
         }
     }
-    //----- Fixer quantité -----//
+    //----- Fixer une quantité -----//
     set(id, color, quantity) {
         var key = id + "_" + color;
         if (quantity > 0 && quantity <= 100) {
@@ -21,7 +22,7 @@ class Cart {
             alert("Veuillez choisir une quantité valable ( 0 - 100).");
         }
     }
-    //----- Supprimer quantité -----//
+    //----- Supprimer une quantité -----//
     remove(id, color, quantity) {
         var key = id + "_" + color;
         if (this.storage[key]) {
@@ -32,6 +33,7 @@ class Cart {
             }
         }
     }
+    //----- Supprimer -----//
     delete(id, color) {
         var key = id + "_" + color;
         if (this.storage[key]) {
@@ -49,6 +51,7 @@ class Cart {
             this.storage = JSON.parse(localStorage.getItem("cart"));
         }
     }
+    //----- Envoi des informations -----//
     postForm(firstName, lastName, address, city, email) {
         this.storage = JSON.parse(localStorage.getItem("cart"));
         //Construction d'un array depuis le local storage
@@ -123,6 +126,7 @@ class Cart {
         }
         return results;
     }
+    //----- Calcul prix total et quantité totale -----//
     async getTotal() {
         var resume = await this.getResume();
         var price = 0;

@@ -1,4 +1,4 @@
-//Affichage caractéristiques du produit 
+//----- Fonction d'affichage des caractéristiques du produit -----//
 function canape_to_html(data) {
   return `<a href="./product.html?id=${data._id}">
     <article>
@@ -8,7 +8,8 @@ function canape_to_html(data) {
     </article>
   </a>`;
 }
-//Affichage des différents articles
+
+//----- Fonction d'affichage des différents articles -----//
 function afficheDatas(canapes) {
   const items = document.getElementById("items");
   var result = "";
@@ -19,6 +20,9 @@ function afficheDatas(canapes) {
 
   items.innerHTML = result;
 }
+
+//----- Fonction récupétation des articles de l'API -----//
+function getProducts(){
 fetch("http://localhost:3000/api/Products")
   //récupération du résultat de la requête
   .then(function (res) {
@@ -32,3 +36,5 @@ fetch("http://localhost:3000/api/Products")
   .catch(function (err) {
     
   });
+}
+getProducts();

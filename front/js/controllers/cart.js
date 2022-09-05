@@ -1,7 +1,9 @@
+//----- Creation nouvelle class -----//
 var cart = new Cart();
+//Chargement du localStorage
 cart.load();
 
-//Affichage de ou des produits dans le panier
+//----- Fonction affichage de ou des produits dans le panier -----//
 function canape_to_html(data) {
   var html = "";
   for (let d in data) {
@@ -30,12 +32,10 @@ function canape_to_html(data) {
   return html;
 }
 
-//Modification quantité produit
+//----- Fonction modification quantité produit -----//
 function setQtt() {
   let selectQuantity = document.getElementsByClassName("itemQuantity");
-  console.log(selectQuantity);
   for (let s in selectQuantity) {
-    console.log(typeof selectQuantity[s]);
 
     if (typeof selectQuantity[s] != "object") continue;
 
@@ -50,8 +50,9 @@ function setQtt() {
       var newQuantity = parseInt(event.target.value, 10);
 
       console.log(newQuantity);
-
+      //Fixation de la quantité dans le localStorage
       cart.set(canap_id, canap_color, newQuantity);
+      //Sauvegarde du localStorage
       cart.save();
 
       afficheDatas();
@@ -59,10 +60,10 @@ function setQtt() {
   }
 }
 
-//Total des quantités
+//----- Fonction total des quantités -----//
+function totalQtt() {
 var productQtt = document.getElementsByClassName("itemQuantity");
 var length = productQtt.length;
-console.log(length);
 totalQtt = 0;
 
 for (var i = 0; i < length; ++i) {
@@ -71,45 +72,59 @@ for (var i = 0; i < length; ++i) {
 
 let productTotalQuantity = document.getElementById("totalQuantity");
 productTotalQuantity.innerHTML = totalQtt;
-console.log(totalQtt);
+}
+totalQtt();
 
-//Suppression du produit dans le panier
+//----- Fonction suppression du produit dans le panier -----//
 function deleteProduct() {
   const btn_deletes = document.getElementsByClassName("deleteItem");
   for (let b in btn_deletes) {
     if (typeof btn_deletes[b] != "object") continue;
     btn_deletes[b].addEventListener("click", (event) => {
+
       //Selection du produit à supprimer en fonction de son id et de sa couleur
       var canap_id = event.target.getAttribute("data-id");
       console.log(canap_id);
       var canap_color = event.target.getAttribute("data-color");
+
+      //Supression du produit dans le localStorage
       cart.delete(canap_id, canap_color);
+
+      //Sauvegarde du localStorage
       cart.save();
 
       //Refresh de la page et message supression produit
       afficheDatas();
+      //Message indiquant la supression du produit
       alert("Le produit a bien été supprimé du panier");
     });
   }
 }
 
-//Formulaire
+//----- Fonction formulaire -----//
 function getForm() {
   let form = document.getElementsByClassName("cart__order__form")[0];
-  // Ajout des Regex
+  //Ajout des Regex
   const regExpString = new RegExp("^[a-zA-Zàâäéèêëïîôöùûüç-]+$");
   const regExpEmail = new RegExp("^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,3}$");
   const regExpAddress = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
   let validation = true;
 
+  //Evenement lors de la soumission du formulaire
   form.addEventListener("submit", async function (event) {
+
+    //L'action par défaut n'est pas exécutée
     event.preventDefault();
+
+    //Evite que l'évènement courant ne se propage
     event.stopPropagation();
-    console.log(await cart.getTotal())
+
+    //Condition SI la quantité total est de zero
     if ((await cart.getTotal()).quantity == 0) {
-      return alert("Il n'y a rien dans le panier");
+      return alert("Veuillez ajouter un produit dans le panier");
       
     }
+    //Condition SI la validation de tous les champs du formulaire est validé
     if( validation == true) {
     let inputName = document.getElementById('firstName');
     let inputLastName = document.getElementById('lastName');
@@ -117,6 +132,7 @@ function getForm() {
     let inputCity = document.getElementById('city');
     let inputMail = document.getElementById('email');
 
+      //Envoi des données à l'API
       cart.postForm(
         inputName.value, 
         inputLastName.value,
@@ -124,7 +140,7 @@ function getForm() {
         inputCity.value,
         inputMail.value 
       )
-      
+      //Sinon message alert
     } else {
       alert("Veuiller choisir un produit et remplir le formulaire")
     }
@@ -212,17 +228,12 @@ function getForm() {
       emailErrorMsg.innerHTML = "Veuillez renseigner une adresse mail valide.";
       validation = false;
     }
-  };
-
-  if (validation) {
-    return true;
-  } else {
-    return false;
-  }
+  }; 
 }
+
 getForm();
 
-//Affichage des différents articles
+//----- Fonction asynchrone affichage des différents articles -----//
 async function afficheDatas() {
   const items = document.querySelector("#cart__items");
   items.innerHTML = canape_to_html(await cart.getResume());
